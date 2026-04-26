@@ -5,7 +5,7 @@ workflows:
       node: 18
       java: 17
     scripts:
-      - cd quitfast-deploy && npm install
+      - cd quitfast-deploy && rm -f package-lock.json && npm i
       - cd quitfast-deploy && npm run build
       - cd quitfast-deploy && npx cap sync
       - cd quitfast-deploy/android && ./gradlew assembleDebug
