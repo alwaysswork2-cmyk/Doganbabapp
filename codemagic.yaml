@@ -5,9 +5,9 @@ workflows:
       node: 18
       java: 17
     scripts:
-      - npm install
-      - npm run build
-      - npx cap sync
-      - cd android && ./gradlew assembleDebug
+      - cd quitfast-deploy && npm install
+      - cd quitfast-deploy && npm run build
+      - cd quitfast-deploy && npx cap sync
+      - cd quitfast-deploy/android && ./gradlew assembleDebug
     artifacts:
-      - android/app/build/outputs/apk/debug/app-debug.apk
+      - quitfast-deploy/android/app/build/outputs/apk/debug/app-debug.apk
