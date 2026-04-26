@@ -2,7 +2,7 @@ workflows:
   android-build:
     name: Android Debug Build
     environment:
-      node: 18
+      node: 22
       java: 17
     scripts:
       - cd quitfast-deploy && rm -f package-lock.json && npm i
