@@ -3,7 +3,7 @@ workflows:
     name: Android Debug Build
     environment:
       node: 22
-      java: 17
+      java: 21
     scripts:
       - cd quitfast-deploy && rm -f package-lock.json && npm i
       - cd quitfast-deploy && npm run build
