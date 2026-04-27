@@ -1,0 +1,13 @@
+workflows:
+  android-build:
+    name: Android Debug Build
+    environment:
+      node: 22
+      java: 21
+    scripts:
+      - cd quitfast-deploy && rm -f package-lock.json && npm i
+      - cd quitfast-deploy && npm run build
+      - cd quitfast-deploy && npx cap sync
+      - cd quitfast-deploy/android && ./gradlew assembleDebug
+    artifacts:
+      - quitfast-deploy/android/app/build/outputs/apk/debug/app-debug.apk

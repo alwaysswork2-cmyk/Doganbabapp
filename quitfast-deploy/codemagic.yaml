@@ -1,0 +1,13 @@
+workflows:
+  android-build:
+    name: Android Debug Build
+    environment:
+      node: 18
+      java: 17
+    scripts:
+      - npm install
+      - npm run build
+      - npx cap sync
+      - cd android && ./gradlew assembleDebug
+    artifacts:
+      - android/app/build/outputs/apk/debug/app-debug.apk
