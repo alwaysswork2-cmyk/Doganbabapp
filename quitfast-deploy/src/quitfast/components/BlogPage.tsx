@@ -24,10 +24,8 @@ import {
 } from 'lucide-react';
 import { Step } from '../types';
 import BottomNav from './BottomNav';
-import { GoogleGenAI, Modality } from '../genaiStub';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const ai = new GoogleGenAI({ apiKey: "" });
 
 const BlogCard = React.memo(({ blog, index, activeCategory, loadingId, playingId, onClick, onPlay }: any) => {
   return (
@@ -162,7 +160,7 @@ export default function BlogPage({
       icon: Brain, 
       color: "from-violet-500/20 to-indigo-500/20",
       accent: "text-violet-400",
-      audioUrl: "/audio/allen-carr.mp3",
+      audioFileName: "Allen Carr Tekniği.mp3",
       content: `
 Allen Carr Tekniği Nedir? Sigara Bırakmayı Kolaylaştıran Farklı Bir Yaklaşım
 
@@ -244,7 +242,7 @@ Sigara bana gerçekten ne veriyor?
       icon: Zap, 
       color: "from-emerald-500/20 to-teal-500/20",
       accent: "text-emerald-400",
-      audioUrl: "/audio/kriz-ani.mp3",
+      audioFileName: "kriz anı.mp3",
       content: `
 Sigara bırakma sürecinde en zorlayıcı anlar genellikle aniden gelen sigara isteğidir. Bu krizler çoğu zaman 5–10 dakika sürer ve doğru bir şeyle meşgul olduğunuzda düşündüğünüzden çok daha kolay geçer. Önemli olan o kısa anı doğru şekilde yönetebilmektir.
 
@@ -289,7 +287,7 @@ Unutmayın: Sigara isteği kalıcı değildir. Genellikle birkaç dakika içinde
       icon: Brain, 
       color: "from-pink-500/20 to-rose-500/20",
       accent: "text-pink-400",
-      audioUrl: "/audio/bdt.mp3",
+      audioFileName: "Bilişsel Davranışçı Terapi.mp3",
       content: `
 Sigara bırakmak sadece fiziksel değil, aynı zamanda güçlü bir zihinsel alışkanlığı değiştirme sürecidir. Bu noktada en etkili ve bilimsel yöntemlerden biri BDT (Bilişsel Davranışçı Terapi)’dir.
 
@@ -368,7 +366,7 @@ BDT, sigara bırakma sürecinde hem nikotin bağımlılığını hem de alışka
       icon: Lightbulb, 
       color: "from-violet-500/20 to-indigo-500/20",
       accent: "text-violet-400",
-      audioUrl: "/audio/tetikleyiciler.mp3",
+      audioFileName: "Sigarq Tetikleyicileri .mp3",
       content: `
 Sigarayı bırakmaya çalışırken çoğu kişi sadece nikotini bırakacağını düşünür. Ama işin gerçeği biraz farklıdır. Aslında bırakmaya çalıştığımız şey yalnızca bir madde değil, yıllardır hayatımıza yerleşmiş küçük alışkanlıklar zinciridir. Sabah kahvesiyle birlikte yakılan sigara, yemekten sonra balkona çıkmak ya da arkadaşlarla verilen o klasik sigara molası… Bunların hepsi zamanla beynimiz için birer tetikleyici haline gelir.
 
@@ -403,7 +401,7 @@ Sigarayı bırakırken çevrenizin desteği gerçekten önemlidir. Arkadaşları
       icon: Timer, 
       color: "from-blue-500/20 to-purple-500/20",
       accent: "text-cyan-400",
-      audioUrl: "/audio/vucutta-neler-olur.mp3",
+      audioFileName: "Sigarayı Bıraktıktan sonra vücudunda neler olur.mp3",
       content: `
 Sigarayı Bıraktıktan Sonra Vücudunda Neler Olur?
 
@@ -441,7 +439,7 @@ Sigarayı bırakma süreci aslında bir alışkanlık değiştirme yolculuğudur
       icon: Brain, 
       color: "from-cyan-500/20 to-blue-500/20",
       accent: "text-cyan-400",
-      audioUrl: "/audio/azaltarak-birakmak.mp3",
+      audioFileName: "sigara azaltarak bırakılır mı.mp3",
       content: `
 Sigara Azaltarak Bırakılır mı? Gerçekten İşe Yarar mı?
 
@@ -518,7 +516,7 @@ Azaltma sürecinin mutlaka bir bitiş tarihi olmalıdır.
       icon: Smile, 
       color: "from-orange-500/20 to-amber-500/20",
       accent: "text-orange-400",
-      audioUrl: "/audio/motivasyon.mp3",
+      audioFileName: "Bırakırken motivasyonu nasıl korursun.mp3",
       content: `
 Sigarayı bırakmak, sadece iradenizi test etmek değil; aslında beyninizin ve vücudunuzun kendini yeniden düzenlediği bir biyolojik süreçtir. Bu yolculukta motivasyonun iniş çıkışları yaşanması çok normaldir. Önemli olan, doğru stratejilerle bu zor anları birer zafer anına dönüştürebilmektir. İşte motivasyonunuzu korumanın etkili yolları:
 
@@ -557,7 +555,7 @@ Unutmayın: Bir tane sigara ne olacak ki? düşüncesi tuzaktır. Vazgeçtiğini
       icon: Brain, 
       color: "from-red-500/20 to-orange-500/20",
       accent: "text-red-400",
-      audioUrl: "/audio/stres.mp3",
+      audioFileName: "Sigara stres Yapar mı.mp3",
       content: `
 Sigara Stres Yapar mı? Rahatlama Yanılsamasının Arkasındaki Gerçekler
 
@@ -601,7 +599,17 @@ Sigarayı bıraktıktan sadece 20 dakika sonra, nikotinin baskısı kalktığı 
     setSelectedBlogIndex(index);
   };
 
-  const handlePlayAudio = async (blog: any, index: number) => {
+  const resolveAudioUrl = (audioFileName: string) => {
+    const base = import.meta.env.BASE_URL || '/';
+    const normalizedBase = base.endsWith('/') ? base : `${base}/`;
+    return `${normalizedBase}sounds/${encodeURIComponent(audioFileName)}`;
+  };
+
+  const handlePlayAudio = (blog: any, index: number) => {
+    if (!blog.audioFileName) {
+      return;
+    }
+
     if (!listenedBlogs.includes(index) && !readBlogs.includes(index)) {
       setListenedBlogs(prev => [...prev, index]);
       const xpValue = parseInt(blog.xp.replace(/[^0-9]/g, '')) || 50;
@@ -610,10 +618,10 @@ Sigarayı bıraktıktan sadece 20 dakika sonra, nikotinin baskısı kalktığı 
       setShowXpBadge(true);
       setTimeout(() => setShowXpBadge(false), 3000);
     }
-    
+
     if (playingId === index) {
       if (audioInstance?.paused) {
-        audioInstance.play().catch(err => console.error("Play error:", err));
+        audioInstance.play().catch(err => console.error('Play error:', err));
         setPlayingId(index);
       } else {
         audioInstance?.pause();
@@ -622,93 +630,50 @@ Sigarayı bıraktıktan sadece 20 dakika sonra, nikotinin baskısı kalktığı 
       return;
     }
 
-    if (loadingId !== null) return;
-
-    const playTTS = async () => {
-      setLoadingId(index);
-      try {
-        const prompt = `Lütfen şu blog yazısını huzurlu ve destekleyici bir kadın sesiyle oku: ${blog.title}. İçerik: ${blog.content.substring(0, 1000)}`;
-        
-        const response = await ai.models.generateContent({
-          model: "gemini-2.5-flash-preview-tts",
-          contents: [{ parts: [{ text: prompt }] }],
-          config: {
-            responseModalities: [Modality.AUDIO],
-            speechConfig: {
-              voiceConfig: {
-                prebuiltVoiceConfig: { voiceName: 'Kore' },
-              },
-            },
-          },
-        });
-
-        const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-        if (base64Audio) {
-          const audioSrc = `data:audio/mp3;base64,${base64Audio}`;
-          setupAndPlay(audioSrc);
-        }
-      } catch (error) {
-        console.error("TTS Error:", error);
-      } finally {
-        setLoadingId(null);
-      }
-    };
-
-    const setupAndPlay = (src: string, isFallback = false) => {
-      if (audioInstance) {
-        audioInstance.pause();
-        audioInstance.src = '';
-      }
-      
-      const newAudio = new Audio(src);
-      let fallbackTriggered = false;
-
-      const triggerFallback = () => {
-        if (!isFallback && !fallbackTriggered) {
-          fallbackTriggered = true;
-          playTTS();
-        }
-      };
-      
-      newAudio.addEventListener('loadedmetadata', () => {
-        setAudioDuration(newAudio.duration);
-        setLoadingId(null);
-      });
-      
-      newAudio.addEventListener('timeupdate', () => {
-        setAudioProgress(newAudio.currentTime);
-      });
-      
-      newAudio.onended = () => {
-        setPlayingId(null);
-        setAudioProgress(0);
-      };
-
-      newAudio.onerror = () => {
-        setLoadingId(null);
-        triggerFallback();
-      };
-      
-      setAudioInstance(newAudio);
-      newAudio.play().then(() => {
-        setLoadingId(null);
-      }).catch(err => {
-        // Only log if it's not a common "user didn't interact" or "source missing" error that we handle via fallback
-        if (err.name !== 'NotAllowedError' && err.name !== 'AbortError') {
-          console.warn("Audio play issue, attempting fallback:", err.message);
-        }
-        setLoadingId(null);
-        triggerFallback();
-      });
-      setPlayingId(index);
-    };
-
-    // Use TTS for all blogs unless a valid audioUrl is provided (future-proofing)
-    if (blog.audioUrl) {
-      setupAndPlay(blog.audioUrl);
-    } else {
-      playTTS();
+    if (audioInstance) {
+      audioInstance.pause();
+      audioInstance.src = '';
     }
+
+    const src = resolveAudioUrl(blog.audioFileName);
+    const newAudio = new Audio(src);
+
+    setAudioProgress(0);
+    setAudioDuration(0);
+    setLoadingId(index);
+
+    newAudio.addEventListener('loadedmetadata', () => {
+      setAudioDuration(newAudio.duration);
+      setLoadingId(null);
+    });
+
+    newAudio.addEventListener('timeupdate', () => {
+      setAudioProgress(newAudio.currentTime);
+    });
+
+    newAudio.onended = () => {
+      setPlayingId(null);
+      setAudioProgress(0);
+    };
+
+    newAudio.onerror = () => {
+      setLoadingId(null);
+      setPlayingId(null);
+      console.error('Audio file failed to load:', src);
+    };
+
+    setAudioInstance(newAudio);
+    newAudio
+      .play()
+      .then(() => {
+        setLoadingId(null);
+        setPlayingId(index);
+      })
+      .catch(err => {
+        setLoadingId(null);
+        setPlayingId(null);
+        console.error('Audio play error:', err);
+      });
   };
 
   const formatTime = (time: number) => {
