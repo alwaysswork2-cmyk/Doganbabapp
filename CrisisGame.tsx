@@ -5,9 +5,9 @@ const GRID_COLS = 6;
 const MAX_TIME = 60;
 const BOMB_COST = 5;
 
-const COLORS = ["🔴", "🟡", "🟢", "🔵", "🟣"];
+const COLORS = ["🍬", "🍭", "🍫", "🍡", "🧁"];
 const BG_COLORS: Record<string, string> = {
-  "🔴": "#f87171", "🟡": "#facc15", "🟢": "#34d399", "🔵": "#60a5fa", "🟣": "#c084fc"
+  "🍬": "#f87171", "🍭": "#facc15", "🍫": "#a16207", "🍡": "#34d399", "🧁": "#c084fc"
 };
 
 // ─── WEB AUDIO ────────────────────────────────────────────────────────────────
