@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronLeft, Crown, Lock } from 'lucide-react';
+import { ChevronLeft, Crown } from 'lucide-react';
 import { Step } from '../types';
 import BottomNav from './BottomNav';
 
@@ -81,7 +81,112 @@ export default function RankingPage({ onNavigate, userAvatar, userName, currentD
     return xp >= 1000 ? (xp / 1000).toFixed(1) + 'K' : xp.toString();
   };
 
-  const showPremiumLock = !isPremium;
+  if (!isPremium) {
+    return (
+      <div className="ranking-page min-h-screen relative pb-24">
+        <style>{`
+          .ranking-page {
+            --bg: #0B0F18;
+            --surface: #111827;
+            --card: #131D2E;
+            --border: #1D2D45;
+            --blue: #1A6EF7;
+            --tp: #E8F0FF;
+            --ts: #6B7D9A;
+            background: var(--bg);
+            color: var(--tp);
+            max-width: 480px;
+            margin: 0 auto;
+            font-family: 'Outfit', sans-serif;
+          }
+          .locked-wrap {
+            min-height: calc(100vh - 88px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+          }
+          .locked-card {
+            width: 100%;
+            border-radius: 28px;
+            background: linear-gradient(180deg, rgba(17,24,39,0.9), rgba(12,18,28,0.95));
+            border: 1px solid rgba(26,110,247,0.25);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+            padding: 28px 22px;
+            text-align: center;
+          }
+          .lock-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(26,110,247,0.12);
+            color: var(--blue);
+            margin-bottom: 18px;
+          }
+          .title {
+            font-size: 24px;
+            font-weight: 800;
+            margin: 0 0 10px;
+            color: #fff;
+          }
+          .subtitle {
+            font-size: 14px;
+            line-height: 1.65;
+            color: var(--ts);
+            margin: 0;
+          }
+          .cta {
+            margin-top: 24px;
+            width: 100%;
+            border: none;
+            border-radius: 16px;
+            padding: 14px 20px;
+            font-weight: 800;
+            font-size: 14px;
+            color: white;
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            box-shadow: 0 12px 24px rgba(37,99,235,0.35);
+          }
+        `}</style>
+
+        <header className="sticky top-0 bg-[#0f172a]/80 backdrop-blur-md z-50 border-b border-white/5">
+          <div className="flex items-center justify-between px-6 pt-6 pb-4">
+            <div className="size-10" />
+            <div className="flex flex-col items-center gap-1">
+              <h1 className="text-xl font-bold tracking-tight text-white font-sans">Sıralama</h1>
+            </div>
+            <div className="size-10" />
+          </div>
+        </header>
+
+        <div className="locked-wrap">
+          <div className="locked-card">
+            <div className="lock-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="5" y="11" width="14" height="10" rx="2" />
+                <path d="M8 11V7a4 4 0 1 1 8 0v4" />
+              </svg>
+            </div>
+            <h2 className="title">Premium üyeler görünür</h2>
+            <p className="subtitle">
+              Liderlik tablosu sadece premium üyeler için açıktır. Üyelik planınızı açarak rekabetin içine katılabilirsiniz.
+            </p>
+            <button
+              onClick={() => onNavigate('premium')}
+              className="cta"
+            >
+              Premium Ol
+            </button>
+          </div>
+        </div>
+
+        <BottomNav onNavigate={onNavigate} activeStep="ranking" />
+      </div>
+    );
+  }
 
   return (
     <div className="ranking-page min-h-screen relative pb-24">
@@ -106,9 +211,6 @@ export default function RankingPage({ onNavigate, userAvatar, userName, currentD
           --cyan:    #3DB8FF;
           --cyan2:   #7DCFFF;
 
-          --red:     #E32020;
-          --red2:   #FF4040;
-
           --tp:  #E8F0FF;
           --ts:  #6B7D9A;
           --tm:  #344766;
@@ -117,54 +219,12 @@ export default function RankingPage({ onNavigate, userAvatar, userName, currentD
           --blue-sq: #0A1E3A;
           --amber-sq:#2E1D00;
           --purple-sq:#1E0A3C;
-          --red-sq:  #2E0A0A;
 
           background: var(--bg);
           font-family: 'Outfit', sans-serif;
           color: var(--tp);
           max-width: 480px;
           margin: 0 auto;
-        }
-
-        .hdr {
-          display:flex; justify-content:space-between; align-items:center;
-          padding: 24px 24px 16px;
-          background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
-          position: relative; z-index: 10;
-        }
-        .back-btn {
-          width: 40px; height: 40px; border-radius: 12px;
-          background: var(--card); border: 1px solid var(--border);
-          display:flex; justify-content:center; align-items:center;
-          color: var(--tp); cursor:pointer; transition: .2s;
-        }
-        .back-btn:active { transform:scale(.92); background:var(--card2); }
-        .title {
-          font-size: 20px; font-weight: 900; letter-spacing: 3px;
-          background: linear-gradient(90deg, #3DB8FF 0%, #4A90F8 50%, #1A6EF7 100%);
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-          background-clip: text;
-          filter: drop-shadow(0 0 10px rgba(61,184,255,0.35));
-        }
-        .title-wrap {
-          display: flex; align-items: center; justify-content: center; gap: 0;
-          background: linear-gradient(135deg, rgba(61,184,255,0.08), rgba(26,110,247,0.06));
-          border: 1px solid rgba(61,184,255,0.2);
-          border-radius: 14px;
-          padding: 7px 20px;
-          position: relative;
-          overflow: hidden;
-        }
-        .title-wrap::after {
-          content: '';
-          position: absolute; inset: 0;
-          background: linear-gradient(90deg, transparent 20%, rgba(61,184,255,0.07) 50%, transparent 80%);
-          background-size: 200% 100%;
-          animation: titleShimmer 3s ease-in-out infinite;
-        }
-        @keyframes titleShimmer {
-          0%   { background-position: 200% 0; }
-          100% { background-position: -200% 0; }
         }
 
         .tabs {
@@ -295,14 +355,10 @@ export default function RankingPage({ onNavigate, userAvatar, userName, currentD
           <div className="size-10"></div>
 
           <div className="flex flex-col items-center gap-1">
-            <h1 className="text-xl font-bold tracking-tight text-white font-sans">
-              Sıralama
-            </h1>
+            <h1 className="text-xl font-bold tracking-tight text-white font-sans">Sıralama</h1>
             <div className="flex items-center gap-1.5">
               <div className="h-px w-8 bg-gradient-to-r from-transparent to-blue-500/60" />
-              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-400/70">
-                Liderlik Tablosu
-              </span>
+              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-400/70">Liderlik Tablosu</span>
               <div className="h-px w-8 bg-gradient-to-l from-transparent to-blue-500/60" />
             </div>
           </div>
@@ -311,89 +367,73 @@ export default function RankingPage({ onNavigate, userAvatar, userName, currentD
         </div>
       </header>
       
-      {showPremiumLock ? (
-        <div className="px-6 pt-10 pb-4">
-          <div className="rounded-3xl border border-blue-500/30 bg-blue-500/5 p-6 text-center">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600/10 text-blue-400">
-              <Lock size={28} />
+      <div className="tabs">
+        <div className={`tab ${activeTab === 'haftalik' ? 'on' : 'off'}`} onClick={() => setActiveTab('haftalik')}>Haftalık</div>
+        <div className={`tab ${activeTab === 'aylik' ? 'on' : 'off'}`} onClick={() => setActiveTab('aylik')}>Aylık</div>
+        <div className={`tab ${activeTab === 'tum' ? 'on' : 'off'}`} onClick={() => setActiveTab('tum')}>Tüm Zamanlar</div>
+      </div>
+
+      <div className="podium">
+        {displayRankings.length >= 2 ? (
+          <div className="pod-col p2">
+            <div className="crown c-silver"><Crown size={24} fill="currentColor" /></div>
+            <div className="ava-wrap">
+              <img src={displayRankings[1].avatar} className="ava" alt={displayRankings[1].name} />
+              <div className="rank-badge rb-silver">2</div>
             </div>
-            <h2 className="text-lg font-bold text-white">Premium üyeler görünüyor</h2>
-            <p className="mt-2 text-sm leading-relaxed text-slate-300">
-              Sıralama ekranı sadece premium kullanıcılar için gösterilir. Üyeliğinizi açın ve liderlik tablosunu görün.
-            </p>
+            <div className="p-name">{displayRankings[1].name}</div>
+            <div className="p-xp">{formatXP(displayRankings[1].xp)} XP</div>
+            <div className="pedestal ped-2"></div>
           </div>
-        </div>
-      ) : (
-        <>
-          <div className="tabs">
-            <div className={`tab ${activeTab === 'haftalik' ? 'on' : 'off'}`} onClick={() => setActiveTab('haftalik')}>Haftalık</div>
-            <div className={`tab ${activeTab === 'aylik' ? 'on' : 'off'}`} onClick={() => setActiveTab('aylik')}>Aylık</div>
-            <div className={`tab ${activeTab === 'tum' ? 'on' : 'off'}`} onClick={() => setActiveTab('tum')}>Tüm Zamanlar</div>
+        ) : <div className="pod-col p2" style={{ visibility: 'hidden' }}><div className="pedestal ped-2"></div></div>}
+        
+        {displayRankings.length >= 1 && (
+          <div className="pod-col p1">
+            <div className="crown c-gold"><Crown size={32} fill="currentColor" /></div>
+            <div className="ava-wrap">
+              <img src={displayRankings[0].avatar} className="ava" alt={displayRankings[0].name} />
+              <div className="rank-badge rb-gold">1</div>
+            </div>
+            <div className="p-name">{displayRankings[0].name}</div>
+            <div className="p-xp">{formatXP(displayRankings[0].xp)} XP</div>
+            <div className="pedestal ped-1"></div>
           </div>
+        )}
 
-          <div className="podium">
-            {displayRankings.length >= 2 ? (
-              <div className="pod-col p2">
-                <div className="crown c-silver"><Crown size={24} fill="currentColor" /></div>
-                <div className="ava-wrap">
-                  <img src={displayRankings[1].avatar} className="ava" alt={displayRankings[1].name} />
-                  <div className="rank-badge rb-silver">2</div>
-                </div>
-                <div className="p-name">{displayRankings[1].name}</div>
-                <div className="p-xp">{formatXP(displayRankings[1].xp)} XP</div>
-                <div className="pedestal ped-2"></div>
-              </div>
-            ) : <div className="pod-col p2" style={{ visibility: 'hidden' }}><div className="pedestal ped-2"></div></div>}
-            
-            {displayRankings.length >= 1 && (
-              <div className="pod-col p1">
-                <div className="crown c-gold"><Crown size={32} fill="currentColor" /></div>
-                <div className="ava-wrap">
-                  <img src={displayRankings[0].avatar} className="ava" alt={displayRankings[0].name} />
-                  <div className="rank-badge rb-gold">1</div>
-                </div>
-                <div className="p-name">{displayRankings[0].name}</div>
-                <div className="p-xp">{formatXP(displayRankings[0].xp)} XP</div>
-                <div className="pedestal ped-1"></div>
-              </div>
-            )}
-
-            {displayRankings.length >= 3 ? (
-              <div className="pod-col p3">
-                <div className="crown c-bronze"><Crown size={24} fill="currentColor" /></div>
-                <div className="ava-wrap">
-                  <img src={displayRankings[2].avatar} className="ava" alt={displayRankings[2].name} />
-                  <div className="rank-badge rb-bronze">3</div>
-                </div>
-                <div className="p-name">{displayRankings[2].name}</div>
-                <div className="p-xp">{formatXP(displayRankings[2].xp)} XP</div>
-                <div className="pedestal ped-3"></div>
-              </div>
-            ) : <div className="pod-col p3" style={{ visibility: 'hidden' }}><div className="pedestal ped-3"></div></div>}
+        {displayRankings.length >= 3 ? (
+          <div className="pod-col p3">
+            <div className="crown c-bronze"><Crown size={24} fill="currentColor" /></div>
+            <div className="ava-wrap">
+              <img src={displayRankings[2].avatar} className="ava" alt={displayRankings[2].name} />
+              <div className="rank-badge rb-bronze">3</div>
+            </div>
+            <div className="p-name">{displayRankings[2].name}</div>
+            <div className="p-xp">{formatXP(displayRankings[2].xp)} XP</div>
+            <div className="pedestal ped-3"></div>
           </div>
+        ) : <div className="pod-col p3" style={{ visibility: 'hidden' }}><div className="pedestal ped-3"></div></div>}
+      </div>
 
-          <div className="list-section">
-            {displayRankings.slice(3).map((user, idx) => (
-              <div key={`${user.name}-${idx}`} className={`urow ${user.isUser ? 'me-row' : ''}`}>
-                <div className="u-rank">{user.rank}</div>
-                <img src={user.avatar} className="u-ava" alt={user.name} />
-                <div className="u-info">
-                  <div className="u-name">{user.name}</div>
-                  <div className="u-badges">
-                    {user.day >= 30 && <div className="badge b-teal">30G</div>}
-                    {user.xp >= 10000 && <div className="badge b-blue">Pro</div>}
-                    {user.isUser && <div className="badge b-amber">Ateş</div>}
-                  </div>
-                </div>
-                <div className="u-stats">
-                  <div className="u-xp">{formatXP(user.xp)} XP</div>
-                  <div className="u-days">{user.day} Gün</div>
-                </div>
+      <div className="list-section">
+        {displayRankings.slice(3).map((user, idx) => (
+          <div key={`${user.name}-${idx}`} className={`urow ${user.isUser ? 'me-row' : ''}`}>
+            <div className="u-rank">{user.rank}</div>
+            <img src={user.avatar} className="u-ava" alt={user.name} />
+            <div className="u-info">
+              <div className="u-name">{user.name}</div>
+              <div className="u-badges">
+                {user.day >= 30 && <div className="badge b-teal">30G</div>}
+                {user.xp >= 10000 && <div className="badge b-blue">Pro</div>}
+                {user.isUser && <div className="badge b-amber">Ateş</div>}
               </div>
-            ))}
+            </div>
+            <div className="u-stats">
+              <div className="u-xp">{formatXP(user.xp)} XP</div>
+              <div className="u-days">{user.day} Gün</div>
+            </div>
           </div>
-        </>
-      )}
+        ))}
+      </div>
 
       <BottomNav onNavigate={onNavigate} activeStep="ranking" />
     </div>
