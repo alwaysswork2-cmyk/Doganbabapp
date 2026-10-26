@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronLeft, Crown } from 'lucide-react';
+import { ChevronLeft, Crown, Lock } from 'lucide-react';
 import { Step } from '../types';
 import BottomNav from './BottomNav';
 
@@ -10,6 +10,7 @@ interface RankingPageProps {
   currentDay: number;
   completedDays: number[];
   userXp: number;
+  isPremium: boolean;
 }
 
 interface RankingUser {
@@ -19,9 +20,10 @@ interface RankingUser {
   avatar: string;
   rank: number;
   isUser?: boolean;
+  isPremium?: boolean;
 }
 
-export default function RankingPage({ onNavigate, userAvatar, userName, currentDay, completedDays, userXp }: RankingPageProps) {
+export default function RankingPage({ onNavigate, userAvatar, userName, currentDay, completedDays, userXp, isPremium }: RankingPageProps) {
   const [activeTab, setActiveTab] = useState<'haftalik' | 'aylik' | 'tum'>('haftalik');
 
   // Combine real user with mock users
@@ -35,23 +37,27 @@ export default function RankingPage({ onNavigate, userAvatar, userName, currentD
     }
 
     return [
-      { name: userName || "Siz", day: currentDay, xp: displayedUserXp, avatar: userAvatar, isUser: true },
-      { name: "Ahmet", day: 12, xp: 200, avatar: "https://picsum.photos/seed/1/200" },
-      { name: "Mehmet", day: 15, xp: 200, avatar: "https://picsum.photos/seed/2/200" },
-      { name: "Ayşe", day: 12, xp: 200, avatar: "https://picsum.photos/seed/3/200" },
-      { name: "Fatma", day: 12, xp: 200, avatar: "https://picsum.photos/seed/4/200" },
-      { name: "Can", day: 14, xp: 210, avatar: "https://picsum.photos/seed/5/200" },
-      { name: "Elif", day: 18, xp: 220, avatar: "https://picsum.photos/seed/6/200" },
-      { name: "Burak", day: 20, xp: 230, avatar: "https://picsum.photos/seed/7/200" },
-      { name: "Selin", day: 22, xp: 240, avatar: "https://picsum.photos/seed/8/200" },
-      { name: "Mert", day: 25, xp: 250, avatar: "https://picsum.photos/seed/9/200" },
-      { name: "Deniz", day: 30, xp: 260, avatar: "https://picsum.photos/seed/10/200" }
+      { name: userName || "Siz", day: currentDay, xp: displayedUserXp, avatar: userAvatar, isUser: true, isPremium },
+      { name: "Ahmet", day: 12, xp: 200, avatar: "https://picsum.photos/seed/1/200", isPremium: true },
+      { name: "Mehmet", day: 15, xp: 200, avatar: "https://picsum.photos/seed/2/200", isPremium: true },
+      { name: "Ayşe", day: 12, xp: 200, avatar: "https://picsum.photos/seed/3/200", isPremium: true },
+      { name: "Fatma", day: 12, xp: 200, avatar: "https://picsum.photos/seed/4/200", isPremium: true },
+      { name: "Can", day: 14, xp: 210, avatar: "https://picsum.photos/seed/5/200", isPremium: true },
+      { name: "Elif", day: 18, xp: 220, avatar: "https://picsum.photos/seed/6/200", isPremium: true },
+      { name: "Burak", day: 20, xp: 230, avatar: "https://picsum.photos/seed/7/200", isPremium: true },
+      { name: "Selin", day: 22, xp: 240, avatar: "https://picsum.photos/seed/8/200", isPremium: true },
+      { name: "Mert", day: 25, xp: 250, avatar: "https://picsum.photos/seed/9/200", isPremium: true },
+      { name: "Deniz", day: 30, xp: 260, avatar: "https://picsum.photos/seed/10/200", isPremium: true }
     ];
-  }, [userName, userAvatar, userXp, currentDay, activeTab]);
+  }, [userName, userAvatar, userXp, currentDay, activeTab, isPremium]);
+
+  const premiumUsers = React.useMemo(() => {
+    return allUsers.filter((user) => user.isPremium);
+  }, [allUsers]);
 
   // Sort logic: Primary XP (desc), Secondary Days (desc)
   const displayRankings = React.useMemo(() => {
-    const sorted = [...allUsers].sort((a, b) => {
+    const sorted = [...premiumUsers].sort((a, b) => {
       if (b.xp !== a.xp) {
         return b.xp - a.xp;
       }
@@ -69,11 +75,13 @@ export default function RankingPage({ onNavigate, userAvatar, userName, currentD
       }
       return { ...user, rank: currentRank };
     });
-  }, [allUsers]);
+  }, [premiumUsers]);
 
   const formatXP = (xp: number) => {
     return xp >= 1000 ? (xp / 1000).toFixed(1) + 'K' : xp.toString();
   };
+
+  const showPremiumLock = !isPremium;
 
   return (
     <div className="ranking-page min-h-screen relative pb-24">
@@ -99,7 +107,7 @@ export default function RankingPage({ onNavigate, userAvatar, userName, currentD
           --cyan2:   #7DCFFF;
 
           --red:     #E32020;
-          --red2:    #FF4040;
+          --red2:   #FF4040;
 
           --tp:  #E8F0FF;
           --ts:  #6B7D9A;
@@ -118,7 +126,6 @@ export default function RankingPage({ onNavigate, userAvatar, userName, currentD
           margin: 0 auto;
         }
 
-        /* ── HEADER ─────────────────────────────── */
         .hdr {
           display:flex; justify-content:space-between; align-items:center;
           padding: 24px 24px 16px;
@@ -160,7 +167,6 @@ export default function RankingPage({ onNavigate, userAvatar, userName, currentD
           100% { background-position: -200% 0; }
         }
 
-        /* ── TABS ───────────────────────────────── */
         .tabs {
           display:flex; gap: 8px; padding: 0 24px 16px;
         }
@@ -172,7 +178,6 @@ export default function RankingPage({ onNavigate, userAvatar, userName, currentD
         .tab.on { background: var(--blue); color: #fff; box-shadow: 0 4px 12px var(--blue-bg); }
         .tab.off { background: var(--card); color: var(--ts); border: 1px solid var(--border); }
 
-        /* ── PODIUM ─────────────────────────────── */
         .podium {
           display:flex; justify-content:center; align-items:flex-end;
           height: 180px; padding: 0 24px; gap: 12px;
@@ -184,7 +189,6 @@ export default function RankingPage({ onNavigate, userAvatar, userName, currentD
         }
         .p1, .p2, .p3 { animation-delay: 0s; }
 
-        /* Crowns */
         .crown { margin-bottom: -10px; z-index: 2; animation: bob 2s ease-in-out infinite alternate; }
         .p2 .crown { animation-delay: .3s; }
         .p3 .crown { animation-delay: .6s; }
@@ -192,7 +196,6 @@ export default function RankingPage({ onNavigate, userAvatar, userName, currentD
         .c-silver { color: #A0B2C6; filter: drop-shadow(0 0 8px rgba(160,178,198,.2)); }
         .c-bronze { color: #CD7F32; filter: drop-shadow(0 0 8px rgba(205,127,50,.2)); }
 
-        /* Avatars */
         .ava-wrap { position: relative; }
         .ava {
           border-radius: 50%; object-fit: cover;
@@ -202,7 +205,6 @@ export default function RankingPage({ onNavigate, userAvatar, userName, currentD
         .p2 .ava { width: 52px; height: 52px; border: 3px solid #A0B2C6; }
         .p3 .ava { width: 52px; height: 52px; border: 3px solid #CD7F32; }
 
-        /* Rank Badges */
         .rank-badge {
           position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
           width: 20px; height: 20px; border-radius: 50%;
@@ -214,12 +216,10 @@ export default function RankingPage({ onNavigate, userAvatar, userName, currentD
         .rb-silver { background: linear-gradient(135deg, #D4E0ED, #A0B2C6); }
         .rb-bronze { background: linear-gradient(135deg, #F0A868, #CD7F32); }
 
-        /* Info */
         .p-name { font-size: 12px; font-weight: 700; color: var(--tp); margin-top: 10px; }
         .p1 .p-name { font-size: 14px; color: var(--gold); }
         .p-xp { font-size: 11px; font-weight: 600; color: var(--ts); margin-top: 2px; }
 
-        /* Pedestals */
         .pedestal {
           width: 100%; border-top-left-radius: 12px; border-top-right-radius: 12px;
           margin-top: 10px;
@@ -230,7 +230,6 @@ export default function RankingPage({ onNavigate, userAvatar, userName, currentD
         .ped-2 { height: 30px; }
         .ped-3 { height: 20px; }
 
-        /* ── LIST SECTION ───────────────────────── */
         .list-section {
           padding: 24px;
           display:flex; flex-direction:column; gap: 12px;
@@ -270,7 +269,6 @@ export default function RankingPage({ onNavigate, userAvatar, userName, currentD
         .u-xp { font-size: 14px; font-weight: 800; color: var(--cyan); margin-bottom: 2px; }
         .u-days { font-size: 12px; font-weight: 600; color: var(--ts); }
 
-        /* Me Row */
         .me-row {
           background: linear-gradient(90deg, rgba(26,110,247,.1) 0%, var(--card) 100%);
           border-color: var(--blue);
@@ -282,7 +280,6 @@ export default function RankingPage({ onNavigate, userAvatar, userName, currentD
         }
         .me-row .u-rank { color: var(--blue); }
 
-        /* ── ANIMATIONS ─────────────────────────── */
         @keyframes slideUp {
           0% { opacity: 0; transform: translateY(20px); }
           100% { opacity: 1; transform: translateY(0); }
@@ -293,7 +290,6 @@ export default function RankingPage({ onNavigate, userAvatar, userName, currentD
         }
       `}</style>
 
-      {/* Header */}
       <header className="sticky top-0 bg-[#0f172a]/80 backdrop-blur-md z-50 border-b border-white/5">
         <div className="flex items-center justify-between px-6 pt-6 pb-4">
           <div className="size-10"></div>
@@ -315,79 +311,89 @@ export default function RankingPage({ onNavigate, userAvatar, userName, currentD
         </div>
       </header>
       
-      {/* Tabs */}
-      <div className="tabs">
-        <div className={`tab ${activeTab === 'haftalik' ? 'on' : 'off'}`} onClick={() => setActiveTab('haftalik')}>Haftalık</div>
-        <div className={`tab ${activeTab === 'aylik' ? 'on' : 'off'}`} onClick={() => setActiveTab('aylik')}>Aylık</div>
-        <div className={`tab ${activeTab === 'tum' ? 'on' : 'off'}`} onClick={() => setActiveTab('tum')}>Tüm Zamanlar</div>
-      </div>
-
-      {/* Podium */}
-      <div className="podium">
-        {/* Rank 2 */}
-        {displayRankings.length >= 2 ? (
-          <div className="pod-col p2">
-            <div className="crown c-silver"><Crown size={24} fill="currentColor" /></div>
-            <div className="ava-wrap">
-              <img src={displayRankings[1].avatar} className="ava" alt={displayRankings[1].name} />
-              <div className="rank-badge rb-silver">2</div>
+      {showPremiumLock ? (
+        <div className="px-6 pt-10 pb-4">
+          <div className="rounded-3xl border border-blue-500/30 bg-blue-500/5 p-6 text-center">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600/10 text-blue-400">
+              <Lock size={28} />
             </div>
-            <div className="p-name">{displayRankings[1].name}</div>
-            <div className="p-xp">{formatXP(displayRankings[1].xp)} XP</div>
-            <div className="pedestal ped-2"></div>
+            <h2 className="text-lg font-bold text-white">Premium üyeler görünüyor</h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-300">
+              Sıralama ekranı sadece premium kullanıcılar için gösterilir. Üyeliğinizi açın ve liderlik tablosunu görün.
+            </p>
           </div>
-        ) : <div className="pod-col p2" style={{ visibility: 'hidden' }}><div className="pedestal ped-2"></div></div>}
-        
-        {/* Rank 1 */}
-        {displayRankings.length >= 1 && (
-          <div className="pod-col p1">
-            <div className="crown c-gold"><Crown size={32} fill="currentColor" /></div>
-            <div className="ava-wrap">
-              <img src={displayRankings[0].avatar} className="ava" alt={displayRankings[0].name} />
-              <div className="rank-badge rb-gold">1</div>
-            </div>
-            <div className="p-name">{displayRankings[0].name}</div>
-            <div className="p-xp">{formatXP(displayRankings[0].xp)} XP</div>
-            <div className="pedestal ped-1"></div>
+        </div>
+      ) : (
+        <>
+          <div className="tabs">
+            <div className={`tab ${activeTab === 'haftalik' ? 'on' : 'off'}`} onClick={() => setActiveTab('haftalik')}>Haftalık</div>
+            <div className={`tab ${activeTab === 'aylik' ? 'on' : 'off'}`} onClick={() => setActiveTab('aylik')}>Aylık</div>
+            <div className={`tab ${activeTab === 'tum' ? 'on' : 'off'}`} onClick={() => setActiveTab('tum')}>Tüm Zamanlar</div>
           </div>
-        )}
 
-        {/* Rank 3 */}
-        {displayRankings.length >= 3 ? (
-          <div className="pod-col p3">
-            <div className="crown c-bronze"><Crown size={24} fill="currentColor" /></div>
-            <div className="ava-wrap">
-              <img src={displayRankings[2].avatar} className="ava" alt={displayRankings[2].name} />
-              <div className="rank-badge rb-bronze">3</div>
-            </div>
-            <div className="p-name">{displayRankings[2].name}</div>
-            <div className="p-xp">{formatXP(displayRankings[2].xp)} XP</div>
-            <div className="pedestal ped-3"></div>
-          </div>
-        ) : <div className="pod-col p3" style={{ visibility: 'hidden' }}><div className="pedestal ped-3"></div></div>}
-      </div>
-
-      {/* List Section */}
-      <div className="list-section">
-        {displayRankings.slice(3).map((user, idx) => (
-          <div key={`${user.name}-${idx}`} className={`urow ${user.isUser ? 'me-row' : ''}`}>
-            <div className="u-rank">{user.rank}</div>
-            <img src={user.avatar} className="u-ava" alt={user.name} />
-            <div className="u-info">
-              <div className="u-name">{user.name}</div>
-              <div className="u-badges">
-                {user.day >= 30 && <div className="badge b-teal">30G</div>}
-                {user.xp >= 10000 && <div className="badge b-blue">Pro</div>}
-                {user.isUser && <div className="badge b-amber">Ateş</div>}
+          <div className="podium">
+            {displayRankings.length >= 2 ? (
+              <div className="pod-col p2">
+                <div className="crown c-silver"><Crown size={24} fill="currentColor" /></div>
+                <div className="ava-wrap">
+                  <img src={displayRankings[1].avatar} className="ava" alt={displayRankings[1].name} />
+                  <div className="rank-badge rb-silver">2</div>
+                </div>
+                <div className="p-name">{displayRankings[1].name}</div>
+                <div className="p-xp">{formatXP(displayRankings[1].xp)} XP</div>
+                <div className="pedestal ped-2"></div>
               </div>
-            </div>
-            <div className="u-stats">
-              <div className="u-xp">{formatXP(user.xp)} XP</div>
-              <div className="u-days">{user.day} Gün</div>
-            </div>
+            ) : <div className="pod-col p2" style={{ visibility: 'hidden' }}><div className="pedestal ped-2"></div></div>}
+            
+            {displayRankings.length >= 1 && (
+              <div className="pod-col p1">
+                <div className="crown c-gold"><Crown size={32} fill="currentColor" /></div>
+                <div className="ava-wrap">
+                  <img src={displayRankings[0].avatar} className="ava" alt={displayRankings[0].name} />
+                  <div className="rank-badge rb-gold">1</div>
+                </div>
+                <div className="p-name">{displayRankings[0].name}</div>
+                <div className="p-xp">{formatXP(displayRankings[0].xp)} XP</div>
+                <div className="pedestal ped-1"></div>
+              </div>
+            )}
+
+            {displayRankings.length >= 3 ? (
+              <div className="pod-col p3">
+                <div className="crown c-bronze"><Crown size={24} fill="currentColor" /></div>
+                <div className="ava-wrap">
+                  <img src={displayRankings[2].avatar} className="ava" alt={displayRankings[2].name} />
+                  <div className="rank-badge rb-bronze">3</div>
+                </div>
+                <div className="p-name">{displayRankings[2].name}</div>
+                <div className="p-xp">{formatXP(displayRankings[2].xp)} XP</div>
+                <div className="pedestal ped-3"></div>
+              </div>
+            ) : <div className="pod-col p3" style={{ visibility: 'hidden' }}><div className="pedestal ped-3"></div></div>}
           </div>
-        ))}
-      </div>
+
+          <div className="list-section">
+            {displayRankings.slice(3).map((user, idx) => (
+              <div key={`${user.name}-${idx}`} className={`urow ${user.isUser ? 'me-row' : ''}`}>
+                <div className="u-rank">{user.rank}</div>
+                <img src={user.avatar} className="u-ava" alt={user.name} />
+                <div className="u-info">
+                  <div className="u-name">{user.name}</div>
+                  <div className="u-badges">
+                    {user.day >= 30 && <div className="badge b-teal">30G</div>}
+                    {user.xp >= 10000 && <div className="badge b-blue">Pro</div>}
+                    {user.isUser && <div className="badge b-amber">Ateş</div>}
+                  </div>
+                </div>
+                <div className="u-stats">
+                  <div className="u-xp">{formatXP(user.xp)} XP</div>
+                  <div className="u-days">{user.day} Gün</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       <BottomNav onNavigate={onNavigate} activeStep="ranking" />
     </div>
