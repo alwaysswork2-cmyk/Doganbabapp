@@ -101,7 +101,9 @@ export default function Home() {
         if (data.notification_settings) setNotificationSettings(data.notification_settings);
 
         const premiumValue = data.is_premium ?? data.premium ?? data.premium_status ?? false;
-        if (premiumValue !== undefined) setIsPremium(Boolean(premiumValue));
+        if (premiumValue !== undefined) {
+          setIsPremium(Boolean(premiumValue));
+        }
       }
     } catch {
       // profiles table may not exist; use defaults
@@ -194,11 +196,10 @@ export default function Home() {
       return;
     }
 
-    // Geri gitme mantığı (Özel durum: 'back' adında bir step gelirse geçmişten al)
     if ((newStep as string) === "back") {
       if (stepHistory.length > 1) {
         const newHistory = [...stepHistory];
-        newHistory.pop(); // Mevcut sayfayı çıkar
+        newHistory.pop();
         const prevStep = newHistory[newHistory.length - 1];
         setStepHistory(newHistory);
         setStep(prevStep);
@@ -209,8 +210,7 @@ export default function Home() {
       return;
     }
 
-    // Yeni sayfaya gitme
-    setStepHistory(prev => [...prev, newStep]);
+    setStepHistory((prev) => [...prev, newStep]);
     setStep(newStep);
   };
 
