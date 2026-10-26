@@ -99,6 +99,9 @@ export default function Home() {
         if (data.rewards) setRewards(data.rewards);
         if (data.crisis_count !== undefined) setCrisisCount(data.crisis_count);
         if (data.notification_settings) setNotificationSettings(data.notification_settings);
+
+        const premiumValue = data.is_premium ?? data.premium ?? data.premium_status ?? false;
+        if (premiumValue !== undefined) setIsPremium(Boolean(premiumValue));
       }
     } catch {
       // profiles table may not exist; use defaults
@@ -223,6 +226,7 @@ export default function Home() {
     setClaimedBadges([]);
     setClaimedGoals([]);
     setRewards([]);
+    setIsPremium(false);
   };
 
   const handleDeleteAccount = async () => {
@@ -321,6 +325,7 @@ export default function Home() {
           currentDay={currentDay}
           completedDays={completedDays}
           userXp={userXp}
+          isPremium={isPremium}
         />
       );
     case "badges":
